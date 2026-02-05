@@ -1,8 +1,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63); color: #fff; line-height: 1.6; }
+body { font-family: 'Roboto', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63); color: #fff; line-height: 1.6; padding-top: 120px; /* Фикс для fixed header на iOS */ }
 .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
-header { background: rgba(0,0,0,0.7); padding: 20px 0; text-align: center; position: fixed; width: 100%; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+header { background: rgba(0,0,0,0.7); padding: 20px 0; text-align: center; position: fixed; width: 100%; top: 0; left: 0; z-index: 100; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); /* Для Safari */ }
 header h1 { font-size: 2.5rem; color: #bb86fc; }
 .subtitle { font-size: 1.2rem; color: #cfcfcf; margin: 10px 0; }
 
@@ -10,17 +10,17 @@ nav { margin-top: 15px; display: flex; justify-content: center; flex-wrap: wrap;
 nav a { color: #fff; text-decoration: none; font-size: 1.1rem; padding: 10px 15px; border-radius: 30px; transition: 0.3s; background: rgba(255,255,255,0.1); }
 nav a:hover { background: #bb86fc; color: #000; }
 
-.hero { background: url('https://images.pexels.com/photos/6771610/pexels-photo-6771610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') center/cover no-repeat; height: 600px; display: flex; align-items: center; justify-content: center; text-align: center; margin-top: 100px; position: relative; }
+.hero { background: url('https://images.pexels.com/photos/6771610/pexels-photo-6771610.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1') center/cover no-repeat; height: 80vh; min-height: 500px; display: flex; align-items: center; justify-content: center; text-align: center; position: relative; }
 .hero::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
-.hero-content { position: relative; z-index: 1; padding: 20px; }
+.hero-content { position: relative; z-index: 1; padding: 20px; max-width: 90%; }
 .hero h2 { font-size: 4rem; color: #ff1744; text-shadow: 0 0 30px #000; margin-bottom: 20px; }
 .hero p { font-size: 1.8rem; margin-bottom: 30px; }
 .btn-hero { padding: 18px 50px; background: linear-gradient(45deg, #ff1744, #bb86fc); color: #fff; border-radius: 50px; font-size: 1.6rem; text-decoration: none; transition: 0.4s; }
 .btn-hero:hover { transform: scale(1.1); box-shadow: 0 0 60px #ff1744; }
 
-.wrapper { display: flex; gap: 40px; padding: 40px 0; flex-wrap: wrap; }
-main { flex: 1 1 100%; }
-.sidebar { flex: 1 1 100%; order: 2; }
+.wrapper { display: flex; flex-direction: column; gap: 40px; padding: 40px 0; }
+main { order: 1; }
+.sidebar { order: 2; }
 
 section { margin: 60px 0; text-align: center; }
 h2 { font-size: 2.5rem; margin-bottom: 40px; color: #bb86fc; }
@@ -46,18 +46,24 @@ h2 { font-size: 2.5rem; margin-bottom: 40px; color: #bb86fc; }
 
 footer { text-align: center; padding: 40px; background: rgba(0,0,0,0.7); }
 
-/* Мобильная адаптация */
+/* Фиксы для iPhone/Safari */
+html, body { height: 100%; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+.hero { height: 70vh; }
+
+/* Адаптация для ПК (боковая панель возвращается) */
 @media (min-width: 769px) {
-    .wrapper { flex-wrap: nowrap; }
-    main { flex: 3; }
-    .sidebar { flex: 1; order: 0; position: sticky; top: 120px; }
+    .wrapper { flex-direction: row; }
+    main { flex: 3; order: 1; }
+    .sidebar { flex: 1; order: 2; position: sticky; top: 140px; align-self: flex-start; }
     .cards { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-    nav { flex-wrap: nowrap; }
+    nav { flex-wrap: nowrap; gap: 20px; }
+    .hero { height: 80vh; }
+    .hero h2 { font-size: 5rem; }
 }
 
+/* Для маленьких телефонов */
 @media (max-width: 480px) {
     header h1 { font-size: 2rem; }
-    .hero { height: 500px; margin-top: 80px; }
     .hero h2 { font-size: 3rem; }
     .hero p { font-size: 1.4rem; }
     .btn-hero { padding: 15px 40px; font-size: 1.4rem; }
