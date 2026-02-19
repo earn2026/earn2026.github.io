@@ -9,18 +9,16 @@ let currentUser = null;
 // Initialize Firebase services after config is loaded
 function initFirebase() {
   if (typeof firebase === 'undefined') {
-    console.error('Firebase SDK not loaded. Please check script loading order.');
     return false;
   }
   
   try {
-    // Ensure Firebase is initialized
+    // Ensure Firebase app is initialized
     if (firebase.apps.length === 0) {
-      console.error('Firebase not initialized. Check firebase-config.js');
       return false;
     }
     
-    // Initialize auth and firestore
+    // Initialize auth and firestore (make them globally accessible)
     auth = firebase.auth();
     db = firebase.firestore();
     
@@ -32,7 +30,6 @@ function initFirebase() {
     
     return true;
   } catch (error) {
-    console.error('Firebase initialization error:', error);
     return false;
   }
 }
@@ -138,7 +135,6 @@ const authSuccessMessage = document.getElementById("auth-success-message");
 
 function openAuthModal() {
   if (!authModal) {
-    console.error("Auth modal not found");
     return;
   }
   
@@ -160,7 +156,7 @@ function openAuthModal() {
       if (emailEl) emailEl.focus();
     }, 100);
   } catch (error) {
-    console.error("Error opening auth modal:", error);
+    // Silently handle errors
   }
 }
 
@@ -180,7 +176,7 @@ function closeAuthModal() {
     if (emailEl) emailEl.value = "";
     if (pwdEl) pwdEl.value = "";
   } catch (error) {
-    console.error("Error closing auth modal:", error);
+    // Silently handle errors
   }
 }
 
@@ -241,7 +237,7 @@ async function signUp() {
   }
 
   try {
-    showAuthStatus("Creating your account...", "loading");
+    showAuthStatus("Creating account...", "loading");
     
     const userCredential = await auth.createUserWithEmailAndPassword(email, password);
     const user = userCredential.user;
@@ -256,7 +252,6 @@ async function signUp() {
         }, { merge: true });
       } catch (firestoreError) {
         // Gracefully handle Firestore errors without breaking auth flow
-        console.error("Firestore save error:", firestoreError);
       }
     }
     
@@ -269,7 +264,6 @@ async function signUp() {
     }, 3000);
     
   } catch (error) {
-    console.error("Sign up error:", error);
     showAuthStatus(getErrorMessage(error), "error");
   }
 }
@@ -308,7 +302,6 @@ async function signIn() {
     }, 1500);
     
   } catch (error) {
-    console.error("Sign in error:", error);
     showAuthStatus(getErrorMessage(error), "error");
   }
 }
@@ -352,7 +345,6 @@ async function signInWithGoogle() {
         await db.collection("users").doc(user.uid).set(userData, { merge: true });
       } catch (firestoreError) {
         // Gracefully handle Firestore errors without breaking auth flow
-        console.error("Firestore save error:", firestoreError);
       }
     }
     
@@ -365,7 +357,6 @@ async function signInWithGoogle() {
     }, 3000);
     
   } catch (error) {
-    console.error("Google sign in error:", error);
     showAuthStatus(getErrorMessage(error), "error");
   }
 }
@@ -378,7 +369,6 @@ async function signOut() {
     updateAuthUI();
     showAuthStatus("Signed out successfully", "success");
   } catch (error) {
-    console.error("Sign out error:", error);
     showAuthStatus("Error signing out", "error");
   }
 }
@@ -386,16 +376,18 @@ async function signOut() {
 function showSuccessMessage() {
   if (!authSuccessMessage) return;
   
+  // Show success message in auth-success-message div
   authSuccessMessage.style.display = "block";
-  if (authStatus) {
-    authStatus.textContent = "Success! Joined 10,000+ members!";
-    authStatus.style.color = "#86efac";
-  }
-  
-  // Show success message in the success div
   const memberText = authSuccessMessage.querySelector("p");
   if (memberText) {
     memberText.innerHTML = `Success! Joined <strong>10,000+ members</strong>!`;
+  }
+  
+  
+  // Also show in auth-status element
+  if (authStatus) {
+    authStatus.textContent = "Success! Joined 10,000+ members!";
+    authStatus.style.color = "#86efac";
   }
 }
 
@@ -423,7 +415,8 @@ function getErrorMessage(error) {
     "auth/popup-blocked": "Popup was blocked. Please allow popups for this site and try again.",
     "auth/operation-not-allowed": "This sign-in method is not enabled. Please contact support.",
     "auth/too-many-requests": "Too many failed attempts. Please try again later.",
-    "auth/user-disabled": "This account has been disabled. Please contact support."
+    "auth/user-disabled": "This account has been disabled. Please contact support.",
+    "auth/email-already-exists": "Email already in use"
   };
   
   return errorMessages[error.code] || (error.message || "An error occurred. Please try again.");
@@ -747,7 +740,7 @@ function init() {
     setupAuthButtons();
     updateAuthUI();
   } catch (error) {
-    console.error("Initialization error:", error);
+    // Silently handle initialization errors
   }
 }
 
