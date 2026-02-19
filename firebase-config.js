@@ -1,17 +1,16 @@
 // Firebase Configuration
-// Replace these placeholder values with your actual Firebase project credentials
-// Get them from: https://console.firebase.google.com/ > Project Settings > General > Your apps
-
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY_HERE",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: 'AIzaSyCJK6p5bJU1BSZpW2mie--yBmhHOHaBcCM',
+  authDomain: 'earn2026-e6132.firebaseapp.com',
+  projectId: 'earn2026-e6132',
+  storageBucket: 'earn2026-e6132.firebasestorage.app',
+  messagingSenderId: '494648209392',
+  appId: '1:494648209392:web:47a7924c3e8d3c31977735'
 };
 
 // Initialize Firebase
-if (typeof firebase !== 'undefined' && firebase.apps.length === 0) {
-  firebase.initializeApp(firebaseConfig);
+if (typeof firebase !== 'undefined') {
+  if (firebase.apps.length === 0) {
+    firebase.initializeApp(firebaseConfig);
+  }
 }

@@ -6,17 +6,37 @@ let auth = null;
 let db = null;
 let currentUser = null;
 
-// Initialize Firebase services
-if (typeof firebase !== 'undefined') {
-  auth = firebase.auth();
-  db = firebase.firestore();
+// Initialize Firebase services after config is loaded
+function initFirebase() {
+  if (typeof firebase === 'undefined') {
+    console.error('Firebase SDK not loaded. Please check firebase-config.js');
+    return false;
+  }
   
-  // Auth state observer
-  auth.onAuthStateChanged((user) => {
-    currentUser = user;
-    updateAuthUI();
-  });
+  try {
+    // Ensure Firebase is initialized
+    if (firebase.apps.length === 0) {
+      console.error('Firebase not initialized. Check firebase-config.js');
+      return false;
+    }
+    
+    auth = firebase.auth();
+    db = firebase.firestore();
+    
+    // Auth state observer
+    auth.onAuthStateChanged((user) => {
+      currentUser = user;
+      updateAuthUI();
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Firebase initialization error:', error);
+    return false;
+  }
 }
+
+// Firebase will be initialized in main init() function
 
 // ============================================
 // PARTICLES (Futuristic Hero Background)
@@ -116,30 +136,51 @@ const authStatus = document.getElementById("auth-status");
 const authSuccessMessage = document.getElementById("auth-success-message");
 
 function openAuthModal() {
-  if (authModal) {
+  if (!authModal) {
+    console.error("Auth modal not found");
+    return;
+  }
+  
+  try {
     authModal.style.display = "flex";
+    authModal.classList.add("auth-modal-visible");
     document.body.style.overflow = "hidden";
+    
     if (authSuccessMessage) authSuccessMessage.style.display = "none";
+    
     const emailEl = document.getElementById("email");
     const pwdEl = document.getElementById("password");
     if (emailEl) emailEl.value = "";
     if (pwdEl) pwdEl.value = "";
     if (authStatus) authStatus.textContent = "";
+    
+    // Focus on email input for better UX
+    setTimeout(() => {
+      if (emailEl) emailEl.focus();
+    }, 100);
+  } catch (error) {
+    console.error("Error opening auth modal:", error);
   }
 }
 
 function closeAuthModal() {
-  if (authModal) {
+  if (!authModal) return;
+  
+  try {
     authModal.classList.remove("auth-modal-visible");
     authModal.style.display = "none";
     document.body.style.overflow = "";
+    
+    if (authStatus) authStatus.textContent = "";
+    if (authSuccessMessage) authSuccessMessage.style.display = "none";
+    
+    const emailEl = document.getElementById("email");
+    const pwdEl = document.getElementById("password");
+    if (emailEl) emailEl.value = "";
+    if (pwdEl) pwdEl.value = "";
+  } catch (error) {
+    console.error("Error closing auth modal:", error);
   }
-  if (authStatus) authStatus.textContent = "";
-  if (authSuccessMessage) authSuccessMessage.style.display = "none";
-  const emailEl = document.getElementById("email");
-  const pwdEl = document.getElementById("password");
-  if (emailEl) emailEl.value = "";
-  if (pwdEl) pwdEl.value = "";
 }
 
 if (authOpenBtn && authModal) {
@@ -178,6 +219,13 @@ async function signUp() {
     return;
   }
 
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showAuthStatus("Please enter a valid email address", "error");
+    return;
+  }
+
   if (password.length < 6) {
     showAuthStatus("Password must be at least 6 characters", "error");
     return;
@@ -196,20 +244,24 @@ async function signUp() {
     
     // Save user data to Firestore
     if (db && user) {
-      await db.collection("users").doc(user.uid).set({
-        email: user.email,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        progress: {
-          guidesCompleted: 0,
-          articlesRead: 0
-        }
-      }, { merge: true });
+      try {
+        await db.collection("users").doc(user.uid).set({
+          email: user.email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          progress: {
+            guidesCompleted: 0,
+            articlesRead: 0
+          }
+        }, { merge: true });
+      } catch (firestoreError) {
+        console.error("Firestore save error:", firestoreError);
+        // Continue even if Firestore save fails
+      }
     }
     
     // Show success message
     showSuccessMessage();
     
-    // Update member count (simulated)
     setTimeout(() => {
       closeAuthModal();
       updateAuthUI();
@@ -227,6 +279,13 @@ async function signIn() {
 
   if (!email || !password) {
     showAuthStatus("Please enter email and password", "error");
+    return;
+  }
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showAuthStatus("Please enter a valid email address", "error");
     return;
   }
 
@@ -259,6 +318,11 @@ async function signInWithGoogle() {
     return;
   }
 
+  if (typeof firebase === 'undefined' || !firebase.auth) {
+    showAuthStatus("Firebase Auth not available", "error");
+    return;
+  }
+
   const provider = new firebase.auth.GoogleAuthProvider();
   
   try {
@@ -269,16 +333,21 @@ async function signInWithGoogle() {
     
     // Save user data to Firestore
     if (db && user) {
-      await db.collection("users").doc(user.uid).set({
-        email: user.email,
-        displayName: user.displayName,
-        photoURL: user.photoURL,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        progress: {
-          guidesCompleted: 0,
-          articlesRead: 0
-        }
-      }, { merge: true });
+      try {
+        await db.collection("users").doc(user.uid).set({
+          email: user.email,
+          displayName: user.displayName || null,
+          photoURL: user.photoURL || null,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          progress: {
+            guidesCompleted: 0,
+            articlesRead: 0
+          }
+        }, { merge: true });
+      } catch (firestoreError) {
+        console.error("Firestore save error:", firestoreError);
+        // Continue even if Firestore save fails
+      }
     }
     
     // Show success message
@@ -309,14 +378,15 @@ async function signOut() {
 }
 
 function showSuccessMessage() {
-  authSuccessMessage.style.display = "block";
-  authStatus.textContent = "";
+  if (!authSuccessMessage) return;
   
-  // Get member count (simulated - in production, fetch from Firestore)
-  const memberCount = 10000 + Math.floor(Math.random() * 1000);
+  authSuccessMessage.style.display = "block";
+  if (authStatus) authStatus.textContent = "";
+  
+  // Show success message
   const memberText = authSuccessMessage.querySelector("p");
   if (memberText) {
-    memberText.innerHTML = `Welcome! You've joined <strong>${memberCount.toLocaleString()}+ members</strong> building their online income!`;
+    memberText.innerHTML = `Welcome! You've joined <strong>10,000+ members</strong> building their online income!`;
   }
 }
 
@@ -330,18 +400,24 @@ function showAuthStatus(message, type = "info") {
 }
 
 function getErrorMessage(error) {
+  if (!error) return "An error occurred. Please try again.";
+  
   const errorMessages = {
     "auth/email-already-in-use": "This email is already registered. Please sign in instead.",
     "auth/invalid-email": "Please enter a valid email address.",
     "auth/weak-password": "Password is too weak. Please use at least 6 characters.",
     "auth/user-not-found": "No account found with this email.",
     "auth/wrong-password": "Incorrect password. Please try again.",
-    "auth/network-request-failed": "Network error. Please check your connection.",
-    "auth/popup-closed-by-user": "Sign-in popup was closed.",
-    "auth/cancelled-popup-request": "Only one popup request is allowed at a time."
+    "auth/network-request-failed": "Network error. Please check your internet connection and try again.",
+    "auth/popup-closed-by-user": "Sign-in popup was closed. Please try again.",
+    "auth/cancelled-popup-request": "Only one popup request is allowed at a time. Please wait.",
+    "auth/popup-blocked": "Popup was blocked. Please allow popups for this site and try again.",
+    "auth/operation-not-allowed": "This sign-in method is not enabled. Please contact support.",
+    "auth/too-many-requests": "Too many failed attempts. Please try again later.",
+    "auth/user-disabled": "This account has been disabled. Please contact support."
   };
   
-  return errorMessages[error.code] || error.message || "An error occurred. Please try again.";
+  return errorMessages[error.code] || (error.message || "An error occurred. Please try again.");
 }
 
 function updateAuthUI() {
@@ -366,55 +442,125 @@ function updateAuthUI() {
   }
 }
 
-// Wire up auth buttons
-if (authSignupBtn) {
-  authSignupBtn.addEventListener("click", signUp);
+// Wire up auth buttons (ensure they're set up after DOM is ready)
+function setupAuthButtons() {
+  if (authSignupBtn) {
+    authSignupBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      signUp();
+    });
+  }
+
+  if (authLoginBtn) {
+    authLoginBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      signIn();
+    });
+  }
+
+  if (authGoogleBtn) {
+    authGoogleBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      signInWithGoogle();
+    });
+  }
+
+  if (authLogoutBtn) {
+    authLogoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      signOut();
+    });
+  }
 }
 
-if (authLoginBtn) {
-  authLoginBtn.addEventListener("click", signIn);
-}
-
-if (authGoogleBtn) {
-  authGoogleBtn.addEventListener("click", signInWithGoogle);
-}
-
-if (authLogoutBtn) {
-  authLogoutBtn.addEventListener("click", signOut);
-}
+// Auth buttons will be setup in main init() function
 
 // ============================================
-// DARK MODE (kept for compatibility)
+// THEME TOGGLE (Dark/Light Mode)
 // ============================================
-const toggle = document.getElementById("theme-toggle");
-if (toggle) {
-  toggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
-    toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-    localStorage.setItem(
-      "theme",
-      document.body.classList.contains("dark") ? "dark" : "light"
-    );
-  });
+function initThemeToggle() {
+  const toggle = document.getElementById("theme-toggle");
+  if (!toggle) return;
 
-  if (localStorage.getItem("theme") === "dark") {
+  // Apply saved theme or default to dark (since site is dark-themed)
+  const savedTheme = localStorage.getItem("theme") || "dark";
+  const isDark = savedTheme === "dark";
+  
+  if (isDark) {
     document.body.classList.add("dark");
     toggle.textContent = "☀️";
+  } else {
+    document.body.classList.remove("dark");
+    toggle.textContent = "🌙";
+  }
+
+  // Update CSS variables on initialization
+  updateThemeVariables(isDark);
+
+  // Toggle theme on click
+  toggle.addEventListener("click", () => {
+    const isCurrentlyDark = document.body.classList.contains("dark");
+    
+    if (isCurrentlyDark) {
+      document.body.classList.remove("dark");
+      toggle.textContent = "🌙";
+      localStorage.setItem("theme", "light");
+      updateThemeVariables(false);
+    } else {
+      document.body.classList.add("dark");
+      toggle.textContent = "☀️";
+      localStorage.setItem("theme", "dark");
+      updateThemeVariables(true);
+    }
+  });
+}
+
+function updateThemeVariables(isDark) {
+  const root = document.documentElement;
+  
+  if (isDark) {
+    // Dark mode colors (default theme)
+    root.style.setProperty('--bg-primary', '#0f0c29');
+    root.style.setProperty('--bg-secondary', '#1a1533');
+    root.style.setProperty('--text-primary', '#e2e8f0');
+    root.style.setProperty('--text-secondary', 'rgba(226, 232, 240, 0.8)');
+    root.style.setProperty('--card-bg', 'rgba(15, 12, 41, 0.6)');
+    root.style.setProperty('--border-color', 'rgba(124, 58, 237, 0.3)');
+  } else {
+    // Light mode colors
+    root.style.setProperty('--bg-primary', '#ffffff');
+    root.style.setProperty('--bg-secondary', '#f8f9fa');
+    root.style.setProperty('--text-primary', '#1a1a1a');
+    root.style.setProperty('--text-secondary', 'rgba(26, 26, 26, 0.8)');
+    root.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.9)');
+    root.style.setProperty('--border-color', 'rgba(124, 58, 237, 0.2)');
   }
 }
 
 // ============================================
 // MOBILE MENU (Hamburger with animation)
 // ============================================
-const mobileBtn = document.getElementById("mobile-btn");
-const navLinks = document.getElementById("nav-links");
+function initMobileMenu() {
+  const mobileBtn = document.getElementById("mobile-btn");
+  const navLinks = document.getElementById("nav-links");
 
-if (mobileBtn && navLinks) {
+  if (!mobileBtn || !navLinks) return;
+
   mobileBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    navLinks.classList.toggle("show");
-    mobileBtn.classList.toggle("is-open");
-    mobileBtn.setAttribute("aria-expanded", navLinks.classList.contains("show"));
+    e.preventDefault();
+    
+    const isOpen = navLinks.classList.contains("show");
+    
+    if (isOpen) {
+      navLinks.classList.remove("show");
+      mobileBtn.classList.remove("is-open");
+      mobileBtn.setAttribute("aria-expanded", "false");
+    } else {
+      navLinks.classList.add("show");
+      mobileBtn.classList.add("is-open");
+      mobileBtn.setAttribute("aria-expanded", "true");
+    }
   });
 
   // Close when clicking a nav link
@@ -428,13 +574,17 @@ if (mobileBtn && navLinks) {
 
   // Close when clicking outside
   document.addEventListener("click", (e) => {
-    if (!navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
+    if (navLinks.classList.contains("show") && 
+        !navLinks.contains(e.target) && 
+        !mobileBtn.contains(e.target)) {
       navLinks.classList.remove("show");
       mobileBtn.classList.remove("is-open");
       mobileBtn.setAttribute("aria-expanded", "false");
     }
   });
 }
+
+// Mobile menu will be initialized in main init() function
 
 // ============================================
 // SITE SEARCH
@@ -575,10 +725,21 @@ function lazyLoadImages() {
 // INITIALIZE ON LOAD
 // ============================================
 function init() {
-  initParticles();
-  initScrollAnimations();
-  lazyLoadImages();
-  updateAuthUI();
+  try {
+    // Initialize Firebase first
+    initFirebase();
+    
+    // Setup UI components
+    initParticles();
+    initScrollAnimations();
+    lazyLoadImages();
+    initThemeToggle();
+    initMobileMenu();
+    setupAuthButtons();
+    updateAuthUI();
+  } catch (error) {
+    console.error("Initialization error:", error);
+  }
 }
 
 if (document.readyState === "loading") {
