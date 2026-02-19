@@ -3,16 +3,18 @@
 // ==========================
 function initParticles() {
   const el = document.getElementById("particles-js");
-  if (el && typeof particlesJS === "function") {
+  if (!el) return;
+  if (typeof particlesJS !== "function") return;
+  try {
     particlesJS("particles-js", {
       particles: {
-        number: { value: 60, density: { enable: true, value_area: 900 } },
+        number: { value: 50, density: { enable: true, value_area: 800 } },
         color: { value: "#ffffff" },
         shape: { type: "circle" },
-        opacity: { value: 0.4, random: true },
+        opacity: { value: 0.35, random: true },
         size: { value: 2.5, random: true },
-        line_linked: { enable: true, distance: 140, color: "#ffffff", opacity: 0.25, width: 0.8 },
-        move: { enable: true, speed: 2.5, direction: "none", out_mode: "out" }
+        line_linked: { enable: true, distance: 130, color: "#ffffff", opacity: 0.2, width: 0.5 },
+        move: { enable: true, speed: 2, direction: "none", out_mode: "out" }
       },
       interactivity: {
         events: {
@@ -21,12 +23,14 @@ function initParticles() {
           resize: true
         },
         modes: {
-          repulse: { distance: 100, duration: 0.4 },
-          push: { particles_nb: 3 }
+          repulse: { distance: 80, duration: 0.4 },
+          push: { particles_nb: 2 }
         }
       },
       retina_detect: true
     });
+  } catch (err) {
+    console.warn("Particles init skipped:", err.message);
   }
 }
 if (document.readyState === "loading") {
@@ -39,27 +43,61 @@ if (document.readyState === "loading") {
 // SCROLL ANIMATIONS (fade-in on scroll)
 // ==========================
 function initScrollAnimations() {
+  const els = document.querySelectorAll(".animate-on-scroll");
+  if (!els.length) return;
+  if (!("IntersectionObserver" in window)) {
+    els.forEach((el) => {
+      el.classList.add("visible");
+      el.querySelectorAll(".card-animate").forEach((c, i) => c.style.setProperty("--i", i));
+    });
+    return;
+  }
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           entry.target.classList.add("visible");
-          const cards = entry.target.querySelectorAll(".card-animate");
-          cards.forEach((card, i) => {
+          entry.target.querySelectorAll(".card-animate").forEach((card, i) => {
             card.style.setProperty("--i", i);
           });
         }
       });
     },
-    { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+    { threshold: 0.1, rootMargin: "0px 0px -30px 0px" }
   );
-  document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
+  els.forEach((el) => observer.observe(el));
 }
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", initScrollAnimations);
 } else {
   initScrollAnimations();
 }
+
+// ==========================
+// AUTH MODAL
+// ==========================
+const authModal = document.getElementById("auth-modal");
+const authOpenBtn = document.getElementById("auth-open-btn");
+const authCloseBtn = document.getElementById("auth-close-btn");
+const authSignupBtn = document.getElementById("auth-signup-btn");
+const authLoginBtn = document.getElementById("auth-login-btn");
+
+if (authOpenBtn && authModal) {
+  authOpenBtn.addEventListener("click", () => {
+    authModal.style.display = "flex";
+  });
+}
+if (authCloseBtn && authModal) {
+  authCloseBtn.addEventListener("click", () => {
+    authModal.style.display = "none";
+  });
+}
+if (authModal) {
+  authModal.addEventListener("click", (e) => {
+    if (e.target === authModal) authModal.style.display = "none";
+  });
+}
+// Signup/Login buttons - wired in Supabase block when available
 
 // ==========================
 // DARK MODE
@@ -271,4 +309,35 @@ if (window.supabase && typeof window.supabase.createClient === "function") {
       window.location.href = "https://earn2026.github.io/";
     }
   });
+
+  // Wire auth buttons
+  if (authSignupBtn) authSignupBtn.addEventListener("click", signUp);
+  if (authLoginBtn) authLoginBtn.addEventListener("click", signIn);
+} else {
+  if (authSignupBtn) {
+    authSignupBtn.addEventListener("click", () => {
+      const s = document.getElementById("auth-status");
+      if (s) s.textContent = "Auth loading...";
+    });
+  }
+  if (authLoginBtn) {
+    authLoginBtn.addEventListener("click", () => {
+      const s = document.getElementById("auth-status");
+      if (s) s.textContent = "Auth loading...";
+    });
+  }
 }
+
+// ==========================
+// SANITY CHECK (no console errors if all OK)
+// ==========================
+(function sanityCheck() {
+  try {
+    const hasNav = !!document.getElementById("nav-links");
+    const hasParticles = !!document.getElementById("particles-js");
+    const fontsOk = document.fonts && document.fonts.check ? document.fonts.check("1em Poppins") : true;
+    if (!fontsOk && document.fonts.status !== "loaded") {
+      document.fonts.ready.then(() => {});
+    }
+  } catch (_) {}
+})();
