@@ -392,6 +392,17 @@ body.dark .article-content p, body.dark .article-content li {
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
+/* Responsive images */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
   .navbar nav {
