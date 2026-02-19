@@ -9,7 +9,7 @@ let currentUser = null;
 // Initialize Firebase services after config is loaded
 function initFirebase() {
   if (typeof firebase === 'undefined') {
-    console.error('Firebase SDK not loaded. Please check firebase-config.js');
+    console.error('Firebase SDK not loaded. Please check script loading order.');
     return false;
   }
   
@@ -20,6 +20,7 @@ function initFirebase() {
       return false;
     }
     
+    // Initialize auth and firestore
     auth = firebase.auth();
     db = firebase.firestore();
     
@@ -191,7 +192,10 @@ if (authOpenBtn && authModal) {
 }
 
 if (authCloseBtn && authModal) {
-  authCloseBtn.addEventListener("click", closeAuthModal);
+  authCloseBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    closeAuthModal();
+  });
 }
 
 if (authModal) {
@@ -222,12 +226,12 @@ async function signUp() {
   // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    showAuthStatus("Please enter a valid email address", "error");
+    showAuthStatus("Invalid email", "error");
     return;
   }
 
   if (password.length < 6) {
-    showAuthStatus("Password must be at least 6 characters", "error");
+    showAuthStatus("Password too short", "error");
     return;
   }
 
@@ -246,16 +250,13 @@ async function signUp() {
     if (db && user) {
       try {
         await db.collection("users").doc(user.uid).set({
+          uid: user.uid,
           email: user.email,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          progress: {
-            guidesCompleted: 0,
-            articlesRead: 0
-          }
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
       } catch (firestoreError) {
+        // Gracefully handle Firestore errors without breaking auth flow
         console.error("Firestore save error:", firestoreError);
-        // Continue even if Firestore save fails
       }
     }
     
@@ -285,7 +286,7 @@ async function signIn() {
   // Validate email format
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    showAuthStatus("Please enter a valid email address", "error");
+    showAuthStatus("Invalid email", "error");
     return;
   }
 
@@ -334,19 +335,24 @@ async function signInWithGoogle() {
     // Save user data to Firestore
     if (db && user) {
       try {
-        await db.collection("users").doc(user.uid).set({
+        const userData = {
+          uid: user.uid,
           email: user.email,
-          displayName: user.displayName || null,
-          photoURL: user.photoURL || null,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          progress: {
-            guidesCompleted: 0,
-            articlesRead: 0
-          }
-        }, { merge: true });
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Add Google-specific fields if available
+        if (user.displayName) {
+          userData.displayName = user.displayName;
+        }
+        if (user.photoURL) {
+          userData.photoURL = user.photoURL;
+        }
+        
+        await db.collection("users").doc(user.uid).set(userData, { merge: true });
       } catch (firestoreError) {
+        // Gracefully handle Firestore errors without breaking auth flow
         console.error("Firestore save error:", firestoreError);
-        // Continue even if Firestore save fails
       }
     }
     
@@ -381,12 +387,15 @@ function showSuccessMessage() {
   if (!authSuccessMessage) return;
   
   authSuccessMessage.style.display = "block";
-  if (authStatus) authStatus.textContent = "";
+  if (authStatus) {
+    authStatus.textContent = "Success! Joined 10,000+ members!";
+    authStatus.style.color = "#86efac";
+  }
   
-  // Show success message
+  // Show success message in the success div
   const memberText = authSuccessMessage.querySelector("p");
   if (memberText) {
-    memberText.innerHTML = `Welcome! You've joined <strong>10,000+ members</strong> building their online income!`;
+    memberText.innerHTML = `Success! Joined <strong>10,000+ members</strong>!`;
   }
 }
 
@@ -403,9 +412,9 @@ function getErrorMessage(error) {
   if (!error) return "An error occurred. Please try again.";
   
   const errorMessages = {
-    "auth/email-already-in-use": "This email is already registered. Please sign in instead.",
-    "auth/invalid-email": "Please enter a valid email address.",
-    "auth/weak-password": "Password is too weak. Please use at least 6 characters.",
+    "auth/email-already-in-use": "Email already in use",
+    "auth/invalid-email": "Invalid email",
+    "auth/weak-password": "Password too short",
     "auth/user-not-found": "No account found with this email.",
     "auth/wrong-password": "Incorrect password. Please try again.",
     "auth/network-request-failed": "Network error. Please check your internet connection and try again.",
