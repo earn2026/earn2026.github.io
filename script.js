@@ -115,35 +115,55 @@ const authLogoutBtn = document.getElementById("auth-logout-btn");
 const authStatus = document.getElementById("auth-status");
 const authSuccessMessage = document.getElementById("auth-success-message");
 
-if (authOpenBtn && authModal) {
-  authOpenBtn.addEventListener("click", () => {
+function openAuthModal() {
+  if (authModal) {
     authModal.style.display = "flex";
     document.body.style.overflow = "hidden";
+    if (authSuccessMessage) authSuccessMessage.style.display = "none";
+    const emailEl = document.getElementById("email");
+    const pwdEl = document.getElementById("password");
+    if (emailEl) emailEl.value = "";
+    if (pwdEl) pwdEl.value = "";
+    if (authStatus) authStatus.textContent = "";
+  }
+}
+
+function closeAuthModal() {
+  if (authModal) {
+    authModal.classList.remove("auth-modal-visible");
+    authModal.style.display = "none";
+    document.body.style.overflow = "";
+  }
+  if (authStatus) authStatus.textContent = "";
+  if (authSuccessMessage) authSuccessMessage.style.display = "none";
+  const emailEl = document.getElementById("email");
+  const pwdEl = document.getElementById("password");
+  if (emailEl) emailEl.value = "";
+  if (pwdEl) pwdEl.value = "";
+}
+
+if (authOpenBtn && authModal) {
+  authOpenBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openAuthModal();
   });
 }
 
 if (authCloseBtn && authModal) {
-  authCloseBtn.addEventListener("click", () => {
-    closeAuthModal();
-  });
+  authCloseBtn.addEventListener("click", closeAuthModal);
 }
 
 if (authModal) {
   authModal.addEventListener("click", (e) => {
-    if (e.target === authModal) {
-      closeAuthModal();
-    }
+    if (e.target === authModal) closeAuthModal();
   });
 }
 
-function closeAuthModal() {
-  authModal.style.display = "none";
-  document.body.style.overflow = "";
-  authStatus.textContent = "";
-  authSuccessMessage.style.display = "none";
-  document.getElementById("email").value = "";
-  document.getElementById("password").value = "";
-}
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && authModal && authModal.style.display === "flex") {
+    closeAuthModal();
+  }
+});
 
 // ============================================
 // FIREBASE AUTH FUNCTIONS
@@ -384,20 +404,34 @@ if (toggle) {
 }
 
 // ============================================
-// MOBILE MENU
+// MOBILE MENU (Hamburger with animation)
 // ============================================
 const mobileBtn = document.getElementById("mobile-btn");
 const navLinks = document.getElementById("nav-links");
 
 if (mobileBtn && navLinks) {
-  mobileBtn.addEventListener("click", () => {
+  mobileBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
     navLinks.classList.toggle("show");
+    mobileBtn.classList.toggle("is-open");
+    mobileBtn.setAttribute("aria-expanded", navLinks.classList.contains("show"));
   });
-  
-  // Close menu when clicking outside
+
+  // Close when clicking a nav link
+  navLinks.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      navLinks.classList.remove("show");
+      mobileBtn.classList.remove("is-open");
+      mobileBtn.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  // Close when clicking outside
   document.addEventListener("click", (e) => {
     if (!navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
       navLinks.classList.remove("show");
+      mobileBtn.classList.remove("is-open");
+      mobileBtn.setAttribute("aria-expanded", "false");
     }
   });
 }
