@@ -1,30 +1,64 @@
-// ==========================
-// PARTICLES (futuristic 2026 hero)
-// ==========================
+// ============================================
+// FIREBASE AUTHENTICATION & FIRESTORE
+// ============================================
+
+let auth = null;
+let db = null;
+let currentUser = null;
+
+// Initialize Firebase services
+if (typeof firebase !== 'undefined') {
+  auth = firebase.auth();
+  db = firebase.firestore();
+  
+  // Auth state observer
+  auth.onAuthStateChanged((user) => {
+    currentUser = user;
+    updateAuthUI();
+  });
+}
+
+// ============================================
+// PARTICLES (Futuristic Hero Background)
+// ============================================
 function initParticles() {
   const el = document.getElementById("particles-js");
   if (!el) return;
   if (typeof particlesJS !== "function") return;
+  
   try {
     particlesJS("particles-js", {
       particles: {
-        number: { value: 50, density: { enable: true, value_area: 800 } },
+        number: { value: 60, density: { enable: true, value_area: 800 } },
         color: { value: "#ffffff" },
         shape: { type: "circle" },
-        opacity: { value: 0.35, random: true },
-        size: { value: 2.5, random: true },
-        line_linked: { enable: true, distance: 130, color: "#ffffff", opacity: 0.2, width: 0.5 },
-        move: { enable: true, speed: 2, direction: "none", out_mode: "out" }
+        opacity: { value: 0.4, random: true },
+        size: { value: 3, random: true },
+        line_linked: { 
+          enable: true, 
+          distance: 150, 
+          color: "#ffffff", 
+          opacity: 0.2, 
+          width: 1 
+        },
+        move: { 
+          enable: true, 
+          speed: 2.5, 
+          direction: "none", 
+          out_mode: "out",
+          bounce: false
+        }
       },
       interactivity: {
+        detect_on: "canvas",
         events: {
           onhover: { enable: true, mode: "repulse" },
           onclick: { enable: true, mode: "push" },
           resize: true
         },
         modes: {
-          repulse: { distance: 80, duration: 0.4 },
-          push: { particles_nb: 2 }
+          repulse: { distance: 100, duration: 0.4 },
+          push: { particles_nb: 3 }
         }
       },
       retina_detect: true
@@ -33,25 +67,24 @@ function initParticles() {
     console.warn("Particles init skipped:", err.message);
   }
 }
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initParticles);
-} else {
-  initParticles();
-}
 
-// ==========================
-// SCROLL ANIMATIONS (fade-in on scroll)
-// ==========================
+// ============================================
+// SCROLL ANIMATIONS
+// ============================================
 function initScrollAnimations() {
   const els = document.querySelectorAll(".animate-on-scroll");
   if (!els.length) return;
+  
   if (!("IntersectionObserver" in window)) {
     els.forEach((el) => {
       el.classList.add("visible");
-      el.querySelectorAll(".card-animate").forEach((c, i) => c.style.setProperty("--i", i));
+      el.querySelectorAll(".card-animate").forEach((c, i) => {
+        c.style.setProperty("--i", i);
+      });
     });
     return;
   }
+  
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -63,45 +96,276 @@ function initScrollAnimations() {
         }
       });
     },
-    { threshold: 0.1, rootMargin: "0px 0px -30px 0px" }
+    { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
   );
+  
   els.forEach((el) => observer.observe(el));
 }
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initScrollAnimations);
-} else {
-  initScrollAnimations();
-}
 
-// ==========================
+// ============================================
 // AUTH MODAL
-// ==========================
+// ============================================
 const authModal = document.getElementById("auth-modal");
 const authOpenBtn = document.getElementById("auth-open-btn");
 const authCloseBtn = document.getElementById("auth-close-btn");
 const authSignupBtn = document.getElementById("auth-signup-btn");
 const authLoginBtn = document.getElementById("auth-login-btn");
+const authGoogleBtn = document.getElementById("auth-google-btn");
+const authLogoutBtn = document.getElementById("auth-logout-btn");
+const authStatus = document.getElementById("auth-status");
+const authSuccessMessage = document.getElementById("auth-success-message");
 
 if (authOpenBtn && authModal) {
   authOpenBtn.addEventListener("click", () => {
     authModal.style.display = "flex";
+    document.body.style.overflow = "hidden";
   });
 }
+
 if (authCloseBtn && authModal) {
   authCloseBtn.addEventListener("click", () => {
-    authModal.style.display = "none";
+    closeAuthModal();
   });
 }
+
 if (authModal) {
   authModal.addEventListener("click", (e) => {
-    if (e.target === authModal) authModal.style.display = "none";
+    if (e.target === authModal) {
+      closeAuthModal();
+    }
   });
 }
-// Signup/Login buttons - wired in Supabase block when available
 
-// ==========================
-// DARK MODE
-// ==========================
+function closeAuthModal() {
+  authModal.style.display = "none";
+  document.body.style.overflow = "";
+  authStatus.textContent = "";
+  authSuccessMessage.style.display = "none";
+  document.getElementById("email").value = "";
+  document.getElementById("password").value = "";
+}
+
+// ============================================
+// FIREBASE AUTH FUNCTIONS
+// ============================================
+
+async function signUp() {
+  const email = document.getElementById("email")?.value.trim();
+  const password = document.getElementById("password")?.value;
+
+  if (!email || !password) {
+    showAuthStatus("Please enter email and password", "error");
+    return;
+  }
+
+  if (password.length < 6) {
+    showAuthStatus("Password must be at least 6 characters", "error");
+    return;
+  }
+
+  if (!auth) {
+    showAuthStatus("Firebase not initialized. Please check firebase-config.js", "error");
+    return;
+  }
+
+  try {
+    showAuthStatus("Creating your account...", "loading");
+    
+    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+    const user = userCredential.user;
+    
+    // Save user data to Firestore
+    if (db && user) {
+      await db.collection("users").doc(user.uid).set({
+        email: user.email,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        progress: {
+          guidesCompleted: 0,
+          articlesRead: 0
+        }
+      }, { merge: true });
+    }
+    
+    // Show success message
+    showSuccessMessage();
+    
+    // Update member count (simulated)
+    setTimeout(() => {
+      closeAuthModal();
+      updateAuthUI();
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Sign up error:", error);
+    showAuthStatus(getErrorMessage(error), "error");
+  }
+}
+
+async function signIn() {
+  const email = document.getElementById("email")?.value.trim();
+  const password = document.getElementById("password")?.value;
+
+  if (!email || !password) {
+    showAuthStatus("Please enter email and password", "error");
+    return;
+  }
+
+  if (!auth) {
+    showAuthStatus("Firebase not initialized. Please check firebase-config.js", "error");
+    return;
+  }
+
+  try {
+    showAuthStatus("Signing in...", "loading");
+    
+    await auth.signInWithEmailAndPassword(email, password);
+    
+    showAuthStatus("Welcome back!", "success");
+    
+    setTimeout(() => {
+      closeAuthModal();
+      updateAuthUI();
+    }, 1500);
+    
+  } catch (error) {
+    console.error("Sign in error:", error);
+    showAuthStatus(getErrorMessage(error), "error");
+  }
+}
+
+async function signInWithGoogle() {
+  if (!auth) {
+    showAuthStatus("Firebase not initialized. Please check firebase-config.js", "error");
+    return;
+  }
+
+  const provider = new firebase.auth.GoogleAuthProvider();
+  
+  try {
+    showAuthStatus("Connecting with Google...", "loading");
+    
+    const result = await auth.signInWithPopup(provider);
+    const user = result.user;
+    
+    // Save user data to Firestore
+    if (db && user) {
+      await db.collection("users").doc(user.uid).set({
+        email: user.email,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        progress: {
+          guidesCompleted: 0,
+          articlesRead: 0
+        }
+      }, { merge: true });
+    }
+    
+    // Show success message
+    showSuccessMessage();
+    
+    setTimeout(() => {
+      closeAuthModal();
+      updateAuthUI();
+    }, 3000);
+    
+  } catch (error) {
+    console.error("Google sign in error:", error);
+    showAuthStatus(getErrorMessage(error), "error");
+  }
+}
+
+async function signOut() {
+  if (!auth) return;
+  
+  try {
+    await auth.signOut();
+    updateAuthUI();
+    showAuthStatus("Signed out successfully", "success");
+  } catch (error) {
+    console.error("Sign out error:", error);
+    showAuthStatus("Error signing out", "error");
+  }
+}
+
+function showSuccessMessage() {
+  authSuccessMessage.style.display = "block";
+  authStatus.textContent = "";
+  
+  // Get member count (simulated - in production, fetch from Firestore)
+  const memberCount = 10000 + Math.floor(Math.random() * 1000);
+  const memberText = authSuccessMessage.querySelector("p");
+  if (memberText) {
+    memberText.innerHTML = `Welcome! You've joined <strong>${memberCount.toLocaleString()}+ members</strong> building their online income!`;
+  }
+}
+
+function showAuthStatus(message, type = "info") {
+  if (!authStatus) return;
+  
+  authStatus.textContent = message;
+  authStatus.style.color = type === "error" ? "#f87171" : 
+                          type === "success" ? "#86efac" : 
+                          "#a855f7";
+}
+
+function getErrorMessage(error) {
+  const errorMessages = {
+    "auth/email-already-in-use": "This email is already registered. Please sign in instead.",
+    "auth/invalid-email": "Please enter a valid email address.",
+    "auth/weak-password": "Password is too weak. Please use at least 6 characters.",
+    "auth/user-not-found": "No account found with this email.",
+    "auth/wrong-password": "Incorrect password. Please try again.",
+    "auth/network-request-failed": "Network error. Please check your connection.",
+    "auth/popup-closed-by-user": "Sign-in popup was closed.",
+    "auth/cancelled-popup-request": "Only one popup request is allowed at a time."
+  };
+  
+  return errorMessages[error.code] || error.message || "An error occurred. Please try again.";
+}
+
+function updateAuthUI() {
+  if (!authOpenBtn) return;
+  
+  if (currentUser) {
+    authOpenBtn.innerHTML = `<i class="fas fa-user-check"></i> ${currentUser.email || "Account"}`;
+    authOpenBtn.style.background = "rgba(34, 197, 94, 0.2)";
+    authOpenBtn.style.border = "1px solid rgba(34, 197, 94, 0.4)";
+    
+    if (authLogoutBtn) {
+      authLogoutBtn.style.display = "block";
+    }
+  } else {
+    authOpenBtn.innerHTML = `<i class="fas fa-user"></i> Join Free`;
+    authOpenBtn.style.background = "";
+    authOpenBtn.style.border = "";
+    
+    if (authLogoutBtn) {
+      authLogoutBtn.style.display = "none";
+    }
+  }
+}
+
+// Wire up auth buttons
+if (authSignupBtn) {
+  authSignupBtn.addEventListener("click", signUp);
+}
+
+if (authLoginBtn) {
+  authLoginBtn.addEventListener("click", signIn);
+}
+
+if (authGoogleBtn) {
+  authGoogleBtn.addEventListener("click", signInWithGoogle);
+}
+
+if (authLogoutBtn) {
+  authLogoutBtn.addEventListener("click", signOut);
+}
+
+// ============================================
+// DARK MODE (kept for compatibility)
+// ============================================
 const toggle = document.getElementById("theme-toggle");
 if (toggle) {
   toggle.addEventListener("click", () => {
@@ -119,9 +383,9 @@ if (toggle) {
   }
 }
 
-// ==========================
+// ============================================
 // MOBILE MENU
-// ==========================
+// ============================================
 const mobileBtn = document.getElementById("mobile-btn");
 const navLinks = document.getElementById("nav-links");
 
@@ -129,49 +393,56 @@ if (mobileBtn && navLinks) {
   mobileBtn.addEventListener("click", () => {
     navLinks.classList.toggle("show");
   });
+  
+  // Close menu when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!navLinks.contains(e.target) && !mobileBtn.contains(e.target)) {
+      navLinks.classList.remove("show");
+    }
+  });
 }
 
-// ==========================
-// SIMPLE SITE SEARCH
-// ==========================
+// ============================================
+// SITE SEARCH
+// ============================================
 const searchInput = document.getElementById("site-search");
 const searchResults = document.getElementById("search-results");
 
 if (searchInput && searchResults) {
   const pages = [
     {
-      title: "Главная — Make Money Online 2026",
-      description: "Обзор, гайды по фрилансу, удалённой работе, инвестициям и пассивному доходу.",
+      title: "Home — Build Your Remote Wealth in 2026",
+      description: "Master freelancing, investing, remote jobs, and digital income streams.",
       url: "index.html"
     },
     {
       title: "Top 10 Freelance Platforms in 2026",
-      description: "Лучшие фриланс‑платформы: Upwork, Fiverr, Toptal и др.",
+      description: "Best freelance platforms: Upwork, Fiverr, Toptal and more.",
       url: "articles/1.html"
     },
     {
       title: "How to Earn Your First $1000 Online",
-      description: "Пошаговый план, как заработать первые $1000 онлайн.",
+      description: "Step-by-step roadmap for beginners to earn their first $1000 online.",
       url: "articles/2.html"
     },
     {
       title: "2026 Investing Blueprint",
-      description: "Безопасные инвестиционные стратегии для новичков.",
+      description: "Safe investment strategies for beginners and long-term wealth building.",
       url: "articles/3.html"
     },
     {
       title: "About Project",
-      description: "О проекте Remote Work & Freelancing Guide 2026.",
+      description: "About the Remote Work & Freelancing Guide 2026 project.",
       url: "about.html"
     },
     {
       title: "Contact",
-      description: "Форма связи и контакты для вопросов.",
+      description: "Contact form and information for questions and support.",
       url: "contact.html"
     },
     {
       title: "Privacy Policy",
-      description: "Политика конфиденциальности сайта.",
+      description: "Privacy policy and data protection information.",
       url: "privacy.html"
     }
   ];
@@ -193,7 +464,7 @@ if (searchInput && searchResults) {
     if (!filtered.length) {
       const empty = document.createElement("div");
       empty.className = "search-empty";
-      empty.textContent = "Ничего не найдено. Попробуйте другой запрос.";
+      empty.textContent = "No results found. Try a different search term.";
       searchResults.appendChild(empty);
     } else {
       filtered.forEach(page => {
@@ -214,7 +485,7 @@ if (searchInput && searchResults) {
     renderResults(e.target.value);
   });
 
-  // Закрывать выпадающий список при клике вне поиска
+  // Close search results when clicking outside
   document.addEventListener("click", e => {
     if (!searchResults.contains(e.target) && e.target !== searchInput) {
       searchResults.style.display = "none";
@@ -222,120 +493,88 @@ if (searchInput && searchResults) {
   });
 }
 
-// ==========================
+// ============================================
 // FAQ ACCORDION
-// ==========================
+// ============================================
 document.querySelectorAll(".accordion-toggle").forEach(btn => {
   btn.addEventListener("click", () => {
-    btn.classList.toggle("active");
-    const content = btn.nextElementSibling;
-    content.style.display =
-      content.style.display === "block" ? "none" : "block";
+    const isActive = btn.classList.contains("active");
+    
+    // Close all accordions
+    document.querySelectorAll(".accordion-toggle").forEach(b => {
+      b.classList.remove("active");
+      b.nextElementSibling.style.display = "none";
+    });
+    
+    // Open clicked one if it wasn't active
+    if (!isActive) {
+      btn.classList.add("active");
+      btn.nextElementSibling.style.display = "block";
+    }
   });
 });
 
-// ==========================
-// SUPABASE CONFIG (опционально)
-// ==========================
-
-// Чтобы лендинг не зависел жёстко от внешнего SDK,
-// Supabase используется только если window.supabase доступен.
-
-if (window.supabase && typeof window.supabase.createClient === "function") {
-  const supabaseUrl = "https://dvbpfcpuulsqvwmnyudj.supabase.co";
-  const supabaseKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2YnBmY3B1dWxzcXZ3bW55dWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExMzM3NDcsImV4cCI6MjA4NjcwOTc0N30.bOF2hFh7rEEPTVsGwuyrXv3eqiR_cFpBoOaYzLP_JOg";
-
-  const supabaseClient = window.supabase.createClient(
-    supabaseUrl,
-    supabaseKey
-  );
-
-  // ==========================
-  // SIGN UP
-  // ==========================
-  async function signUp() {
-    const email = document.getElementById("email")?.value.trim();
-    const password = document.getElementById("password")?.value;
-
-    if (!email || !password) {
-      alert("Enter email and password");
-      return;
-    }
-
-    const { error } = await supabaseClient.auth.signUp({
-      email,
-      password
+// ============================================
+// LAZY LOAD IMAGES
+// ============================================
+function lazyLoadImages() {
+  const images = document.querySelectorAll("img[loading='lazy']");
+  
+  if ("IntersectionObserver" in window) {
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          img.classList.add("loaded");
+          observer.unobserve(img);
+        }
+      });
     });
-
-    if (error) {
-      alert(error.message);
-    } else {
-      // Редирект на основной сайт
-      window.location.href = "https://earn2026.github.io/";
-    }
-  }
-
-  // ==========================
-  // SIGN IN
-  // ==========================
-  async function signIn() {
-    const email = document.getElementById("email")?.value.trim();
-    const password = document.getElementById("password")?.value;
-
-    if (!email || !password) {
-      alert("Enter email and password");
-      return;
-    }
-
-    const { error } = await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      alert(error.message);
-    } else {
-      // Редирект на основной сайт
-      window.location.href = "https://earn2026.github.io/";
-    }
-  }
-
-  // ==========================
-  // AUTO REDIRECT IF LOGGED IN
-  // ==========================
-  supabaseClient.auth.getSession().then(({ data }) => {
-    if (data.session) {
-      window.location.href = "https://earn2026.github.io/";
-    }
-  });
-
-  // Wire auth buttons
-  if (authSignupBtn) authSignupBtn.addEventListener("click", signUp);
-  if (authLoginBtn) authLoginBtn.addEventListener("click", signIn);
-} else {
-  if (authSignupBtn) {
-    authSignupBtn.addEventListener("click", () => {
-      const s = document.getElementById("auth-status");
-      if (s) s.textContent = "Auth loading...";
-    });
-  }
-  if (authLoginBtn) {
-    authLoginBtn.addEventListener("click", () => {
-      const s = document.getElementById("auth-status");
-      if (s) s.textContent = "Auth loading...";
-    });
+    
+    images.forEach(img => imageObserver.observe(img));
+  } else {
+    images.forEach(img => img.classList.add("loaded"));
   }
 }
 
-// ==========================
-// SANITY CHECK (no console errors if all OK)
-// ==========================
+// ============================================
+// INITIALIZE ON LOAD
+// ============================================
+function init() {
+  initParticles();
+  initScrollAnimations();
+  lazyLoadImages();
+  updateAuthUI();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", init);
+} else {
+  init();
+}
+
+// ============================================
+// PERFORMANCE: Debounce scroll events
+// ============================================
+let ticking = false;
+window.addEventListener("scroll", () => {
+  if (!ticking) {
+    window.requestAnimationFrame(() => {
+      ticking = false;
+    });
+    ticking = true;
+  }
+}, { passive: true });
+
+// ============================================
+// SANITY CHECK
+// ============================================
 (function sanityCheck() {
   try {
     const hasNav = !!document.getElementById("nav-links");
     const hasParticles = !!document.getElementById("particles-js");
     const fontsOk = document.fonts && document.fonts.check ? document.fonts.check("1em Poppins") : true;
+    
     if (!fontsOk && document.fonts.status !== "loaded") {
       document.fonts.ready.then(() => {});
     }

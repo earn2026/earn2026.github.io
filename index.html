@@ -3,80 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- 
-  <!-- SEO и OG -->
-  <title>Make Money Online 2026 | Заработок Онлайн без Вложений</title>
-  <meta name="description" content="Лучший гид по заработку онлайн в 2026: фриланс, удалённые работы, инвестиции и пассивный доход. Бесплатные гайды для начинающих. 10,000+ участников уже зарабатывают!">
- 
+  
+  <!-- SEO and OG -->
+  <title>Build Your Remote Wealth in 2026 | Make Money Online Guide</title>
+  <meta name="description" content="Join 10,000+ members earning online in 2026. Master freelancing, investing, remote jobs, and passive income. Free guides, proven strategies, and expert tips to build your digital wealth.">
+  
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="apple-touch-icon" href="/logo.png">
- 
-  <meta property="og:title" content="Make Money Online 2026 | Заработок Онлайн без Вложений">
-  <meta property="og:description" content="Фриланс, удалённые работы, инвестиции и пассивный доход в 2026. Бесплатные гайды и стратегии. Присоединяйся к 10,000+ участникам!">
+  
+  <meta property="og:title" content="Build Your Remote Wealth in 2026 | Make Money Online Guide">
+  <meta property="og:description" content="Join 10,000+ members earning online. Master freelancing, investing, remote jobs, and passive income. Free guides and proven strategies.">
   <meta property="og:image" content="https://earn2026.github.io/logo.png">
   <meta property="og:url" content="https://earn2026.github.io">
   <meta property="og:type" content="website">
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <!-- Google tag (gtag.js) -->
+  
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L1MNXNNN25"></script>
   <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L1MNXNNN25');
+  </script>
 
-  gtag('config', 'G-L1MNXNNN25');
-</script>
-
-  <!-- Supabase JS (client-side auth) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="navbar">
-  <div class="logo">Make Money Online</div>
+  <div class="logo"><i class="fas fa-rocket"></i> Earn2026</div>
   <nav id="nav-links">
-    <a href="#home">Overview</a>
+    <a href="#home">Home</a>
     <a href="#guides">Guides</a>
     <a href="#articles">Articles</a>
+    <a href="#testimonials">Success Stories</a>
     <a href="#faq">FAQ</a>
     <a href="#contact">Contact</a>
   </nav>
-  <!-- Поле поиска по сайту -->
   <div class="search-wrapper">
-    <input
-      type="search"
-      id="site-search"
-      placeholder="Поиск по сайту..."
-      aria-label="Search on site"
-    >
+    <input type="search" id="site-search" placeholder="Search..." aria-label="Search on site">
     <div id="search-results" class="search-results" aria-live="polite"></div>
   </div>
-
-  <button id="auth-open-btn" class="btn-auth" type="button">Login / Sign up</button>
+  <button id="auth-open-btn" class="btn-auth" type="button"><i class="fas fa-user"></i> Join Free</button>
   <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
   <button class="mobile-menu" id="mobile-btn" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
 </header>
 
-<!-- AUTH MODAL (Supabase email + password) -->
+<!-- AUTH MODAL (Firebase Auth) -->
 <div id="auth-modal" class="auth-modal" style="display:none;">
   <div class="auth-box">
     <button id="auth-close-btn" class="auth-close" type="button" aria-label="Close">&times;</button>
-    <h2>Join 10,000+ Members</h2>
-    <p class="auth-subtitle">Create a free account or log in to sync your progress.</p>
+    <h2><i class="fas fa-user-plus"></i> Join 10,000+ Members</h2>
+    <p class="auth-subtitle">Create your free account and start building wealth today!</p>
 
-    <input type="email" id="email" placeholder="Email" autocomplete="email" required>
-    <input type="password" id="password" placeholder="Password" autocomplete="current-password" required>
+    <div id="auth-success-message" class="auth-success" style="display:none;">
+      <i class="fas fa-check-circle"></i>
+      <p>Welcome! You've joined <strong>10,000+ members</strong> building their online income!</p>
+    </div>
 
-    <button id="auth-signup-btn" class="btn-primary auth-action" type="button">Sign up</button>
-    <button id="auth-login-btn" class="btn-secondary auth-action" type="button">Log in</button>
+    <input type="email" id="email" placeholder="Your Email" autocomplete="email" required>
+    <input type="password" id="password" placeholder="Password (min. 6 characters)" autocomplete="current-password" required>
+
+    <button id="auth-signup-btn" class="btn-primary auth-action" type="button">
+      <i class="fas fa-user-plus"></i> Sign Up Free
+    </button>
+    <button id="auth-login-btn" class="btn-secondary auth-action" type="button">
+      <i class="fas fa-sign-in-alt"></i> Log In
+    </button>
+    
+    <div class="auth-divider">
+      <span>or</span>
+    </div>
+    
+    <button id="auth-google-btn" class="btn-google auth-action" type="button">
+      <i class="fab fa-google"></i> Continue with Google
+    </button>
 
     <button id="auth-logout-btn" class="auth-logout" type="button" style="display:none;">Log out</button>
 
-    <p class="auth-note">We use Supabase email + password auth. You may receive a confirmation email.</p>
+    <p class="auth-note">Secure authentication powered by Firebase. Your data is protected.</p>
     <p class="auth-status" id="auth-status"></p>
   </div>
 </div>
@@ -86,11 +100,19 @@
   <div class="hero-bg-gradient"></div>
   <div id="particles-js"></div>
   <div class="hero-content animate-fade-in">
-    <img src="https://images.fonearena.com/blog/wp-content/uploads/2026/01/Lenovo-Yoga-IdeaPad-and-Chromebook-CES-2026-1024x576.jpg" alt="Блогер за работой" class="img-fluid" style="max-width: 600px; margin: 0 auto 30px; border-radius: 12px; display: block;">
-    <h1>Build Your Remote Wealth in 2026</h1>
-    <p>Master freelancing, investing, remote jobs, and digital income streams used by thousands.</p>
-    <div class="stats">10,000+ Members • $2M+ Collective Earnings • 50+ Free Guides</div>
-    <a href="#guides" class="btn-primary btn-animate">Get Started Free</a>
+    <h1 class="hero-title">Build Your Remote Wealth in 2026</h1>
+    <p class="hero-subtitle">Master freelancing, investing, remote jobs, and digital income streams. Join thousands earning $5k–$15k/month from anywhere.</p>
+    <div class="stats">
+      <span><i class="fas fa-users"></i> 10,000+ Members</span>
+      <span><i class="fas fa-dollar-sign"></i> $2M+ Earned</span>
+      <span><i class="fas fa-book"></i> 50+ Free Guides</span>
+    </div>
+    <a href="#guides" class="btn-primary btn-animate">
+      <i class="fas fa-rocket"></i> Get Started Free
+    </a>
+  </div>
+  <div class="scroll-indicator">
+    <i class="fas fa-chevron-down"></i>
   </div>
 </section>
 
@@ -99,24 +121,24 @@
   <h2><i class="fas fa-star section-icon"></i> What You'll Master</h2>
   <div class="card-grid">
     <div class="card card-animate">
-      <i class="fas fa-laptop-code fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-laptop-code"></i></div>
       <h3>Freelancing</h3>
-      <p>Land high-paying clients and scale to $5k–$15k/month.</p>
+      <p>Land high-paying clients and scale to $5k–$15k/month. Learn proven strategies for Upwork, Fiverr, and direct clients.</p>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-chart-line fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-chart-line"></i></div>
       <h3>Investing</h3>
-      <p>Beginner-friendly strategies for stocks, ETFs, and crypto.</p>
+      <p>Beginner-friendly strategies for stocks, ETFs, crypto, and real estate. Build long-term wealth safely.</p>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-lightbulb fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-lightbulb"></i></div>
       <h3>Side Hustles</h3>
-      <p>Proven digital income ideas that work in 2026.</p>
+      <p>Proven digital income ideas that work in 2026. From dropshipping to content creation, find your path.</p>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-briefcase fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-briefcase"></i></div>
       <h3>Remote Jobs</h3>
-      <p>Get hired by global companies — no office required.</p>
+      <p>Get hired by global companies — no office required. Learn how to land $50k–$150k remote positions.</p>
     </div>
   </div>
 </section>
@@ -126,20 +148,44 @@
   <h2><i class="fas fa-newspaper section-icon"></i> Featured Articles</h2>
   <div class="card-grid">
     <div class="card card-animate">
-      <img src="https://thumbs.dreamstime.com/b/web-201707992.jpg" alt="Иконки соцсетей" class="img-fluid" style="max-width: 200px; margin: 0 auto 20px; border-radius: 8px; display: block;">
+      <div class="card-image">
+        <i class="fas fa-globe fa-3x"></i>
+      </div>
       <h3>Top 10 Freelance Platforms in 2026</h3>
-      <p>Upwork, Fiverr, Toptal, and hidden gems.</p>
-      <a href="articles/1.html" class="read-more">Read →</a>
+      <p>Upwork, Fiverr, Toptal, and hidden gems. Complete guide to finding high-paying clients.</p>
+      <a href="articles/1.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
     </div>
     <div class="card card-animate">
+      <div class="card-image">
+        <i class="fas fa-dollar-sign fa-3x"></i>
+      </div>
       <h3>How to Earn Your First $1000 Online</h3>
-      <p>Step-by-step roadmap for beginners.</p>
-      <a href="articles/2.html" class="read-more">Read →</a>
+      <p>Step-by-step roadmap for beginners. Real strategies that work in 30–60 days.</p>
+      <a href="articles/2.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
     </div>
     <div class="card card-animate">
+      <div class="card-image">
+        <i class="fas fa-chart-bar fa-3x"></i>
+      </div>
       <h3>2026 Investing Blueprint</h3>
-      <p>Safe growth strategies for long-term wealth.</p>
-      <a href="articles/3.html" class="read-more">Read →</a>
+      <p>Safe growth strategies for long-term wealth. Stocks, crypto, and passive income explained.</p>
+      <a href="articles/3.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card card-animate">
+      <div class="card-image">
+        <i class="fas fa-home fa-3x"></i>
+      </div>
+      <h3>Remote Work Success Guide</h3>
+      <p>Land your dream remote job. Resume tips, interview strategies, and negotiation tactics.</p>
+      <a href="#guides" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card card-animate">
+      <div class="card-image">
+        <i class="fas fa-coins fa-3x"></i>
+      </div>
+      <h3>Passive Income Streams</h3>
+      <p>Create digital assets that earn while you sleep. Affiliate marketing, digital products, and more.</p>
+      <a href="#guides" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
     </div>
   </div>
 </section>
@@ -149,19 +195,34 @@
   <h2><i class="fas fa-book-open section-icon"></i> Free Step-by-Step Guides</h2>
   <div class="card-grid">
     <div class="card card-animate">
-      <img src="https://www.gadgetsalvation.com/blog/wp-content/uploads/2022/04/best-laptops-for-blogging.jpg" alt="Ноутбук для блогинга" class="img-fluid" style="max-width: 250px; margin: 0 auto 20px; border-radius: 8px; display: block;">
+      <div class="card-icon"><i class="fas fa-user-tie"></i></div>
       <h3>Freelance Starter Guide</h3>
-      <p>From zero to your first paid client.</p>
+      <p>From zero to your first paid client. Profile optimization, proposal writing, and pricing strategies.</p>
+      <a href="#articles" class="read-more">Start Learning <i class="fas fa-arrow-right"></i></a>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-globe fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-globe-americas"></i></div>
       <h3>Remote Career Guide</h3>
-      <p>Build location-independent income.</p>
+      <p>Build location-independent income. Find remote jobs, negotiate salaries, and work from anywhere.</p>
+      <a href="#articles" class="read-more">Start Learning <i class="fas fa-arrow-right"></i></a>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-wallet fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-wallet"></i></div>
       <h3>Passive Income Guide</h3>
-      <p>Create digital assets that earn while you sleep.</p>
+      <p>Create digital assets that earn while you sleep. Affiliate marketing, courses, and digital products.</p>
+      <a href="#articles" class="read-more">Start Learning <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card card-animate">
+      <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
+      <h3>Investment Basics</h3>
+      <p>Start investing with confidence. Learn about stocks, ETFs, crypto, and retirement accounts.</p>
+      <a href="#articles" class="read-more">Start Learning <i class="fas fa-arrow-right"></i></a>
+    </div>
+    <div class="card card-animate">
+      <div class="card-icon"><i class="fas fa-bullhorn"></i></div>
+      <h3>Digital Marketing Mastery</h3>
+      <p>Grow your online presence. SEO, social media, email marketing, and content creation strategies.</p>
+      <a href="#articles" class="read-more">Start Learning <i class="fas fa-arrow-right"></i></a>
     </div>
   </div>
 </section>
@@ -171,38 +232,41 @@
   <h2><i class="fas fa-wrench section-icon"></i> Recommended Tools</h2>
   <div class="card-grid">
     <div class="card card-animate">
-      <img src="https://cdn.prod.website-files.com/65c1ae21fb2191466dd6ce72/65e9161a5bce4384f7c8b99c_650bf3505b3c4b75046c18e5_03-canva-interface-tools-features.jpeg" alt="Интерфейс Canva" class="img-fluid" style="max-width: 250px; margin: 0 auto 20px; border-radius: 8px; display: block;">
+      <div class="card-icon"><i class="fas fa-briefcase"></i></div>
       <h3>Portfolio Builders</h3>
-      <p>Showcase your skills professionally.</p>
+      <p>Showcase your skills professionally. Best platforms for freelancers and remote workers.</p>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-chart-pie fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-chart-pie"></i></div>
       <h3>Finance Trackers</h3>
-      <p>Monitor income and investments.</p>
+      <p>Monitor income and investments. Track your progress toward financial freedom.</p>
     </div>
     <div class="card card-animate">
-      <i class="fas fa-bolt fa-3x icon"></i>
+      <div class="card-icon"><i class="fas fa-bolt"></i></div>
       <h3>Productivity Apps</h3>
-      <p>Work smarter, not harder.</p>
+      <p>Work smarter, not harder. Tools to maximize your efficiency and earnings.</p>
     </div>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
 <section id="testimonials" class="testimonials animate-on-scroll">
-  <h2><i class="fas fa-quote-left section-icon"></i> What People Say</h2>
+  <h2><i class="fas fa-quote-left section-icon"></i> Success Stories</h2>
   <div class="card-grid">
     <div class="card card-animate">
-      <p class="quote">“RWG helped me quit my 9-5 and earn $8k/month freelancing.”</p>
-      <p class="author">— Alex R., Designer</p>
+      <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+      <p class="quote">"This guide helped me quit my 9-5 and earn $8k/month freelancing. Life-changing!"</p>
+      <p class="author">— Alex R., Freelance Designer</p>
     </div>
     <div class="card card-animate">
-      <p class="quote">“Best investing guides I've found. Up 42% this year.”</p>
+      <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+      <p class="quote">"Best investing guides I've found. My portfolio is up 42% this year. Thank you!"</p>
       <p class="author">— Sarah K., Investor</p>
     </div>
     <div class="card card-animate">
-      <p class="quote">“Finally landed a remote job paying 3x my old salary.”</p>
-      <p class="author">— Mike T., Developer</p>
+      <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+      <p class="quote">"Finally landed a remote job paying 3x my old salary. The strategies really work!"</p>
+      <p class="author">— Mike T., Software Developer</p>
     </div>
   </div>
 </section>
@@ -214,19 +278,25 @@
     <div class="accordion-item">
       <button class="accordion-toggle">Is this really free?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
-        <p>Yes! All guides and core content are 100% free. We also offer premium coaching for advanced students.</p>
+        <p>Yes! All guides and core content are 100% free. We're committed to helping you build wealth. We also offer premium coaching for advanced students who want personalized guidance.</p>
       </div>
     </div>
     <div class="accordion-item">
       <button class="accordion-toggle">How fast can I start earning?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
-        <p>Many members earn their first $500–$1000 within 30–60 days following the guides.</p>
+        <p>Many members earn their first $500–$1000 within 30–60 days following our guides. Results vary based on your effort and chosen path, but we provide proven strategies that work.</p>
       </div>
     </div>
     <div class="accordion-item">
       <button class="accordion-toggle">Do I need experience?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
-        <p>No. We have complete beginner paths for freelancing, investing, and remote jobs.</p>
+        <p>No experience needed! We have complete beginner paths for freelancing, investing, and remote jobs. Our guides start from the basics and take you step-by-step.</p>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <button class="accordion-toggle">What makes this different?<i class="fas fa-chevron-down arrow"></i></button>
+      <div class="accordion-content">
+        <p>We focus on proven, actionable strategies updated for 2026. Our community of 10,000+ members shares real results, and we provide ongoing support to help you succeed.</p>
       </div>
     </div>
   </div>
@@ -235,20 +305,22 @@
 <!-- NEWSLETTER -->
 <section class="newsletter animate-on-scroll">
   <h2><i class="fas fa-paper-plane section-icon"></i> Join 10,000+ Members</h2>
-  <p>Get weekly income tips and exclusive guides.</p>
+  <p>Get weekly income tips, exclusive guides, and success strategies delivered to your inbox.</p>
   <form action="https://api.web3forms.com/submit" method="POST">
     <input type="hidden" name="access_key" value="9da8ee3d-0219-4535-a888-5311c62cab3b">
     <input type="hidden" name="redirect" value="https://earn2026.github.io/thanks.html">
     <input type="email" name="email" placeholder="Your email" required>
-    <button type="submit" class="btn-primary btn-animate">Subscribe</button>
+    <button type="submit" class="btn-primary btn-animate">
+      <i class="fas fa-paper-plane"></i> Subscribe Free
+    </button>
   </form>
-  <p style="font-size:0.9rem; margin-top:15px; opacity:0.8;">We respect your privacy. Unsubscribe anytime.</p>
+  <p style="font-size:0.9rem; margin-top:15px; opacity:0.9;">We respect your privacy. Unsubscribe anytime.</p>
 </section>
 
 <!-- CONTACT -->
 <section id="contact" class="contact animate-on-scroll">
   <h2><i class="fas fa-envelope section-icon"></i> Contact Us</h2>
-  <p>Have questions? Send us a message and we'll reply soon.</p>
+  <p>Have questions? Send us a message and we'll reply within 24 hours.</p>
  
   <form action="https://api.web3forms.com/submit" method="POST" class="contact-form">
     <input type="hidden" name="access_key" value="9da8ee3d-0219-4535-a888-5311c62cab3b">
@@ -258,7 +330,9 @@
     <input type="email" name="email" placeholder="Your Email" required>
     <textarea name="message" placeholder="Your Message" rows="6" required></textarea>
    
-    <button type="submit" class="btn-primary btn-animate">Send Message</button>
+    <button type="submit" class="btn-primary btn-animate">
+      <i class="fas fa-paper-plane"></i> Send Message
+    </button>
   </form>
   <div class="contact-info">
     <p><i class="fas fa-envelope icon-contact"></i> Email: <a href="mailto:bannop2007@gmail.com">bannop2007@gmail.com</a></p>
@@ -267,10 +341,11 @@
 </section>
 
 <footer class="footer">
-  <p>© 2026 Make Money Online Guide. All rights reserved.</p>
+  <p>&copy; 2026 Earn2026. All rights reserved. | <a href="privacy.html" style="color: rgba(255,255,255,0.8);">Privacy Policy</a></p>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js" defer></script>
+<script src="firebase-config.js"></script>
 <script src="script.js" defer></script>
 </body>
 </html>
