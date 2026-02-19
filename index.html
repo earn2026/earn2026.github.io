@@ -17,21 +17,8 @@
   <meta property="og:url" content="https://earn2026.github.io">
   <meta property="og:type" content="website">
 
-  <!--
-    В исходной версии подключались внешние UI-библиотеки:
-    - Google Fonts (Inter)
-    - Font Awesome
-    - AOS (анимации при скролле)
-    - Tidio (чат-виджет)
-
-    Для более лёгкого и минималистичного лендинга на чистом HTML/CSS/JS
-    подключения ниже закомментированы, но сам код сохранён.
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="//code.tidio.co/vygwrzfojnhhvmnbzh0gxqtblhcxwerl.js" async></script>
-  -->
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-L1MNXNNN25"></script>
   <script>
@@ -71,10 +58,7 @@
 
   <button id="auth-open-btn" class="btn-auth" type="button">Login / Sign up</button>
   <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
-  <!-- Старая кнопка-бургер с Font Awesome сохранена:
-  <button class="mobile-menu" id="mobile-btn"><i class="fas fa-bars"></i></button>
-  -->
-  <button class="mobile-menu" id="mobile-btn" aria-label="Open navigation">☰</button>
+  <button class="mobile-menu" id="mobile-btn" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
 </header>
 
 <!-- AUTH MODAL (Supabase email + password) -->
@@ -99,39 +83,40 @@
 
 <!-- HERO -->
 <section id="home" class="hero">
+  <div class="hero-bg-gradient"></div>
   <div id="particles-js"></div>
-  <div class="hero-content">
+  <div class="hero-content animate-fade-in">
     <img src="https://images.fonearena.com/blog/wp-content/uploads/2026/01/Lenovo-Yoga-IdeaPad-and-Chromebook-CES-2026-1024x576.jpg" alt="Блогер за работой" class="img-fluid" style="max-width: 600px; margin: 0 auto 30px; border-radius: 12px; display: block;">
-    <h1 data-aos="fade-up" data-aos-duration="1000">Build Your Remote Wealth in 2026</h1>
-    <p data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000">Master freelancing, investing, remote jobs, and digital income streams used by thousands.</p>
-    <div class="stats" data-aos="fade-up" data-aos-delay="600" data-aos-duration="1000">10,000+ Members • $2M+ Collective Earnings • 50+ Free Guides</div>
+    <h1>Build Your Remote Wealth in 2026</h1>
+    <p>Master freelancing, investing, remote jobs, and digital income streams used by thousands.</p>
+    <div class="stats">10,000+ Members • $2M+ Collective Earnings • 50+ Free Guides</div>
     <p style="color: red; font-size: 1.5rem; font-weight: 800; margin-top: 16px;">
       TEST FROM CURSOR — IT WORKS NOW!
     </p>
-    <a href="#guides" class="btn-primary" data-aos="zoom-in" data-aos-delay="900" data-aos-duration="1000">Get Started Free</a>
+    <a href="#guides" class="btn-primary btn-animate">Get Started Free</a>
   </div>
 </section>
 
 <!-- FEATURES -->
-<section class="features">
-  <h2 data-aos="fade-up">What You'll Master</h2>
+<section class="features animate-on-scroll">
+  <h2><i class="fas fa-star section-icon"></i> What You'll Master</h2>
   <div class="card-grid">
-    <div class="card" data-aos="fade-up" data-aos-delay="100">
+    <div class="card card-animate">
       <i class="fas fa-laptop-code fa-3x icon"></i>
       <h3>Freelancing</h3>
       <p>Land high-paying clients and scale to $5k–$15k/month.</p>
     </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="200">
+    <div class="card card-animate">
       <i class="fas fa-chart-line fa-3x icon"></i>
       <h3>Investing</h3>
       <p>Beginner-friendly strategies for stocks, ETFs, and crypto.</p>
     </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="300">
+    <div class="card card-animate">
       <i class="fas fa-lightbulb fa-3x icon"></i>
       <h3>Side Hustles</h3>
       <p>Proven digital income ideas that work in 2026.</p>
     </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="400">
+    <div class="card card-animate">
       <i class="fas fa-briefcase fa-3x icon"></i>
       <h3>Remote Jobs</h3>
       <p>Get hired by global companies — no office required.</p>
@@ -140,21 +125,21 @@
 </section>
 
 <!-- ARTICLES -->
-<section id="articles" class="articles">
-  <h2 data-aos="fade-up">Featured Articles</h2>
+<section id="articles" class="articles animate-on-scroll">
+  <h2><i class="fas fa-newspaper section-icon"></i> Featured Articles</h2>
   <div class="card-grid">
-    <div class="card" data-aos="fade-up" data-aos-delay="100">
+    <div class="card card-animate">
       <img src="https://thumbs.dreamstime.com/b/web-201707992.jpg" alt="Иконки соцсетей" class="img-fluid" style="max-width: 200px; margin: 0 auto 20px; border-radius: 8px; display: block;">
       <h3>Top 10 Freelance Platforms in 2026</h3>
       <p>Upwork, Fiverr, Toptal, and hidden gems.</p>
       <a href="articles/1.html" class="read-more">Read →</a>
     </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="200">
+    <div class="card card-animate">
       <h3>How to Earn Your First $1000 Online</h3>
       <p>Step-by-step roadmap for beginners.</p>
       <a href="articles/2.html" class="read-more">Read →</a>
     </div>
-    <div class="card" data-aos="fade-up" data-aos-delay="300">
+    <div class="card card-animate">
       <h3>2026 Investing Blueprint</h3>
       <p>Safe growth strategies for long-term wealth.</p>
       <a href="articles/3.html" class="read-more">Read →</a>
@@ -163,20 +148,20 @@
 </section>
 
 <!-- GUIDES -->
-<section id="guides" class="guides">
-  <h2 data-aos="fade-up">Free Step-by-Step Guides</h2>
+<section id="guides" class="guides animate-on-scroll">
+  <h2><i class="fas fa-book-open section-icon"></i> Free Step-by-Step Guides</h2>
   <div class="card-grid">
-    <div class="card" data-aos="flip-left" data-aos-delay="100">
+    <div class="card card-animate">
       <img src="https://www.gadgetsalvation.com/blog/wp-content/uploads/2022/04/best-laptops-for-blogging.jpg" alt="Ноутбук для блогинга" class="img-fluid" style="max-width: 250px; margin: 0 auto 20px; border-radius: 8px; display: block;">
       <h3>Freelance Starter Guide</h3>
       <p>From zero to your first paid client.</p>
     </div>
-    <div class="card" data-aos="flip-left" data-aos-delay="200">
+    <div class="card card-animate">
       <i class="fas fa-globe fa-3x icon"></i>
       <h3>Remote Career Guide</h3>
       <p>Build location-independent income.</p>
     </div>
-    <div class="card" data-aos="flip-left" data-aos-delay="300">
+    <div class="card card-animate">
       <i class="fas fa-wallet fa-3x icon"></i>
       <h3>Passive Income Guide</h3>
       <p>Create digital assets that earn while you sleep.</p>
@@ -185,20 +170,20 @@
 </section>
 
 <!-- TOOLS -->
-<section id="tools" class="tools">
-  <h2 data-aos="fade-up">Recommended Tools</h2>
+<section id="tools" class="tools animate-on-scroll">
+  <h2><i class="fas fa-wrench section-icon"></i> Recommended Tools</h2>
   <div class="card-grid">
-    <div class="card" data-aos="zoom-in" data-aos-delay="100">
+    <div class="card card-animate">
       <img src="https://cdn.prod.website-files.com/65c1ae21fb2191466dd6ce72/65e9161a5bce4384f7c8b99c_650bf3505b3c4b75046c18e5_03-canva-interface-tools-features.jpeg" alt="Интерфейс Canva" class="img-fluid" style="max-width: 250px; margin: 0 auto 20px; border-radius: 8px; display: block;">
       <h3>Portfolio Builders</h3>
       <p>Showcase your skills professionally.</p>
     </div>
-    <div class="card" data-aos="zoom-in" data-aos-delay="200">
+    <div class="card card-animate">
       <i class="fas fa-chart-pie fa-3x icon"></i>
       <h3>Finance Trackers</h3>
       <p>Monitor income and investments.</p>
     </div>
-    <div class="card" data-aos="zoom-in" data-aos-delay="300">
+    <div class="card card-animate">
       <i class="fas fa-bolt fa-3x icon"></i>
       <h3>Productivity Apps</h3>
       <p>Work smarter, not harder.</p>
@@ -207,18 +192,18 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section id="testimonials" class="testimonials">
-  <h2 data-aos="fade-up">What People Say</h2>
+<section id="testimonials" class="testimonials animate-on-scroll">
+  <h2><i class="fas fa-quote-left section-icon"></i> What People Say</h2>
   <div class="card-grid">
-    <div class="card" data-aos="fade-right" data-aos-delay="100">
+    <div class="card card-animate">
       <p class="quote">“RWG helped me quit my 9-5 and earn $8k/month freelancing.”</p>
       <p class="author">— Alex R., Designer</p>
     </div>
-    <div class="card" data-aos="fade-right" data-aos-delay="200">
+    <div class="card card-animate">
       <p class="quote">“Best investing guides I've found. Up 42% this year.”</p>
       <p class="author">— Sarah K., Investor</p>
     </div>
-    <div class="card" data-aos="fade-right" data-aos-delay="300">
+    <div class="card card-animate">
       <p class="quote">“Finally landed a remote job paying 3x my old salary.”</p>
       <p class="author">— Mike T., Developer</p>
     </div>
@@ -226,22 +211,22 @@
 </section>
 
 <!-- FAQ -->
-<section id="faq" class="faq">
-  <h2 data-aos="fade-up">Frequently Asked Questions</h2>
+<section id="faq" class="faq animate-on-scroll">
+  <h2><i class="fas fa-question-circle section-icon"></i> Frequently Asked Questions</h2>
   <div class="accordion">
-    <div class="accordion-item" data-aos="fade-up" data-aos-delay="100">
+    <div class="accordion-item">
       <button class="accordion-toggle">Is this really free?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
         <p>Yes! All guides and core content are 100% free. We also offer premium coaching for advanced students.</p>
       </div>
     </div>
-    <div class="accordion-item" data-aos="fade-up" data-aos-delay="200">
+    <div class="accordion-item">
       <button class="accordion-toggle">How fast can I start earning?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
         <p>Many members earn their first $500–$1000 within 30–60 days following the guides.</p>
       </div>
     </div>
-    <div class="accordion-item" data-aos="fade-up" data-aos-delay="300">
+    <div class="accordion-item">
       <button class="accordion-toggle">Do I need experience?<i class="fas fa-chevron-down arrow"></i></button>
       <div class="accordion-content">
         <p>No. We have complete beginner paths for freelancing, investing, and remote jobs.</p>
@@ -251,24 +236,24 @@
 </section>
 
 <!-- NEWSLETTER -->
-<section class="newsletter">
-  <h2 data-aos="fade-up">Join 10,000+ Members</h2>
-  <p data-aos="fade-up" data-aos-delay="100">Get weekly income tips and exclusive guides.</p>
-  <form action="https://api.web3forms.com/submit" method="POST" data-aos="fade-up" data-aos-delay="200">
+<section class="newsletter animate-on-scroll">
+  <h2><i class="fas fa-paper-plane section-icon"></i> Join 10,000+ Members</h2>
+  <p>Get weekly income tips and exclusive guides.</p>
+  <form action="https://api.web3forms.com/submit" method="POST">
     <input type="hidden" name="access_key" value="9da8ee3d-0219-4535-a888-5311c62cab3b">
     <input type="hidden" name="redirect" value="https://earn2026.github.io/thanks.html">
     <input type="email" name="email" placeholder="Your email" required>
-    <button type="submit" class="btn-primary">Subscribe</button>
+    <button type="submit" class="btn-primary btn-animate">Subscribe</button>
   </form>
   <p style="font-size:0.9rem; margin-top:15px; opacity:0.8;">We respect your privacy. Unsubscribe anytime.</p>
 </section>
 
 <!-- CONTACT -->
-<section id="contact" class="contact">
-  <h2 data-aos="fade-up">Contact Us</h2>
-  <p data-aos="fade-up" data-aos-delay="100">Have questions? Send us a message and we'll reply soon.</p>
+<section id="contact" class="contact animate-on-scroll">
+  <h2><i class="fas fa-envelope section-icon"></i> Contact Us</h2>
+  <p>Have questions? Send us a message and we'll reply soon.</p>
  
-  <form action="https://api.web3forms.com/submit" method="POST" class="contact-form" data-aos="fade-up" data-aos-delay="200">
+  <form action="https://api.web3forms.com/submit" method="POST" class="contact-form">
     <input type="hidden" name="access_key" value="9da8ee3d-0219-4535-a888-5311c62cab3b">
     <input type="hidden" name="redirect" value="https://earn2026.github.io/thanks.html">
    
@@ -276,9 +261,9 @@
     <input type="email" name="email" placeholder="Your Email" required>
     <textarea name="message" placeholder="Your Message" rows="6" required></textarea>
    
-    <button type="submit" class="btn-primary">Send Message</button>
+    <button type="submit" class="btn-primary btn-animate">Send Message</button>
   </form>
-  <div class="contact-info" data-aos="fade-up" data-aos-delay="300">
+  <div class="contact-info">
     <p><i class="fas fa-envelope icon-contact"></i> Email: <a href="mailto:bannop2007@gmail.com">bannop2007@gmail.com</a></p>
     <p><i class="fas fa-phone icon-contact"></i> Phone: <a href="tel:+994515654707">+994 51 565 47 07</a></p>
   </div>
@@ -288,14 +273,7 @@
   <p>© 2026 Make Money Online Guide. All rights reserved.</p>
 </footer>
 
-<!--
-  Визуальные эффектные библиотеки (particles.js и AOS)
-  убраны из продакшн-лендинга для простоты и скорости загрузки.
-  При необходимости их можно вновь включить, раскомментировав строки ниже.
-
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
--->
 <script src="script.js"></script>
 </body>
 </html>
