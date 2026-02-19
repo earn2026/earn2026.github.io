@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+  <!-- SEO и OG -->
+  <title鼠标>Make Money Online 2026 | Заработок Онлайн без Вложений</title>
+  <meta name="description" content="Лучший гид по заработку онлайн в 2026: фриланс, удалённые работы, инвестиции и пассивный доход. Бесплатные гайды для начинающих. 10,000+ участников уже зарабатывают!">
+ 
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/logo.png">
+ 
+  <meta property="og:title" content="Make Money Online 2026 | Заработок Онлайн без Вложений">
+  <meta property="og:description" content="Фриланс, удалённые работы, инвестиции и пассивный доход в 2026. Бесплатные гайды и стратегии. Присоединяйся к 10,000+ участникам!">
+  <meta property="og:image" content="https://earn2026.github.io/logo.png">
+  <meta property="og:url" content="https://earn2026.github.io">
+  <meta property="og:type" content="website">
+ 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="//code.tidio.co/vygwrzfojnhhvmnbzh0gxqtblhcxwerl.js" async></script>
+  <link rel="stylesheet" href="style.css">
+ 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<!-- Форма логина (показывается, если не залогинен) -->
+<div id="auth-section" class="auth-section">
+  <div class="auth-box">
+    <h2>Welcome to Make Money Online 2026</h2>
+    <p>Register or login to access all content</p>
+    <form id="auth-form">
+      <input type="email" id="email" placeholder="Your Email" required>
+      <input type="password" id="password" placeholder="Password (min 6 characters)" required>
+      <button type="submit" class="btn-primary">Register / Login</button>
+    </form>
+    <p id="auth-message"></p>
+  </div>
+</div>
+
+<!-- Основной контент сайта (скрыт, пока не залогинен) -->
+<div id="main-content" style="display: none;">
+
+<header class="navbar">
+  <div class="logo">Make Money Online</div>
+  <nav id="nav-links">
+    <a href="#home">Home</a>
+    <a href="#articles">Articles</a>
+    <a href="#guides">Guides</a>
+    <a href="#tools">Tools</a>
+    <a href="#testimonials">Testimonials</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <button id="theme-toggle">🌙</button>
+  <button class="mobile-menu" id="mobile-btn"><i class="fas fa-bars"></i></button>
+</header>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div id="particles-js"></div>
+  <div class="hero-content">
+    <h1 data-aos="fade-up" data-aos-duration="1000">Build Your Remote Wealth in 2026</h1>
+    <p data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000">Master freelancing, investing, remote jobs, and digital income streams used by thousands.</p>
+    <div class="stats" data-aos="fade-up" data-aos-delay="600" data-aos-duration="1000">10,000+ Members • $2M+ Collective Earnings • 50+ Free Guides</div>
+    <a href="#guides" class="btn-primary" data-aos="zoom-in" data-aos-delay="900" data-aos-duration="1000">Get Started Free</a>
+  </div>
+</section>
+
+<!-- Все остальные секции (features, articles, guides, tools, testimonials, faq, newsletter, contact, footer) — вставь свой код оттуда -->
+
+<footer class="footer">
+  <p>© 2026 Make Money Online Guide. All rights reserved.</p>
+</footer>
+
+</div> <!-- конец main-content -->
+
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="script.js"></script>
+
+<!-- Supabase Auth Script -->
+<script>
+  const supabaseUrl = 'https://dvbpfcpuulsqvwmnyudj.supabase.co';
+  const supabaseAnonKey = 'sb_publishable_IlZk908P7XGCSMfcmXoFwA_sHzympLP';
+
+  const supabase = Supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const authSection = document.getElementById('auth-section');
+  const mainContent = document.getElementById('main-content');
+  const authForm = document.getElementById('auth-form');
+  const authMessage = document.getElementById('auth-message');
+
+  // Проверка при загрузке
+  async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      authSection.style.display = 'none';
+      mainContent.style.display = 'block';
+    } else {
+      authSection.style.display = 'block';
+      mainContent.style.display = 'none';
+    }
+  }
+  checkAuth();
+
+  // Форма
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    let { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error && error.message.includes('Invalid login credentials')) {
+      ({ data, error } = await supabase.auth.signUp({ email, password }));
+    }
+
+    if (error) {
+      authMessage.textContent = 'Error: ' + error.message;
+      authMessage.style.color = 'red';
+    } else {
+      authMessage.textContent = 'Success! Loading content...';
+      authMessage.style.color = 'white';
+      setTimeout(() => location.reload(), 2000);
+    }
+  });
+</script>
+
+<!-- Стили для формы логина -->
+<style>
+  .auth-section {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  .auth-box {
+    background: rgba(30, 41, 59, 0.9);
+    padding: 40px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    color: white;
+  }
+  .auth-box h2 {
+    margin-bottom: 20px;
+  }
+  .auth-box input {
+    width: 100%;
+    padding: 14px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: none;
+  }
+</style>
+</body>
+</html>

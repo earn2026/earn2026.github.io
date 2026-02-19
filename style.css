@@ -1,0 +1,450 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: #f9fafb;
+  color: #111;
+  scroll-behavior: smooth;
+  line-height: 1.6;
+}
+.navbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  transition: all 0.3s;
+}
+nav a {
+  margin: 0 20px;
+  text-decoration: none;
+  color: #111;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+nav a:hover {
+  color: #2563eb;
+}
+
+/* SEARCH */
+.search-wrapper {
+  position: relative;
+  margin-right: 20px;
+}
+
+#site-search {
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.8);
+  min-width: 220px;
+  font-size: 0.9rem;
+}
+
+.search-results {
+  position: absolute;
+  top: 115%;
+  right: 0;
+  width: 320px;
+  max-height: 360px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.18);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  padding: 8px 0;
+  display: none;
+  z-index: 1100;
+}
+
+.search-result-item {
+  padding: 10px 14px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-result-item strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.search-result-item span {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.search-result-item:hover {
+  background: #eff6ff;
+}
+
+.search-empty {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+body.dark .search-results {
+  background: #020617;
+  border-color: #1e293b;
+}
+
+body.dark #site-search {
+  background: #020617;
+  border-color: #1e293b;
+  color: #e2e8f0;
+}
+
+#theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+.mobile-menu {
+  display: none;
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  overflow: hidden;
+}
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 0 20px;
+}
+.hero h1 {
+  font-size: 56px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+.stats {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 20px 0;
+}
+.btn-primary {
+  display: inline-block;
+  padding: 14px 32px;
+  background: white;
+  color: #2563eb;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+section {
+  padding: 120px 40px;
+  text-align: center;
+}
+h2 {
+  font-size: 40px;
+  margin-bottom: 60px;
+  font-weight: 700;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+.card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  padding: 40px 30px;
+  border-radius: 16px;
+  transition: all 0.4s;
+  text-align: center;
+}
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+}
+.icon {
+  color: #2563eb;
+  margin-bottom: 20px;
+}
+.icon::before {
+  /* Минималистичная "иконка" без внешних библиотек */
+  content: "●";
+  display: inline-block;
+  font-size: 1.4rem;
+}
+.read-more {
+  margin-top: 15px;
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+.quote {
+  font-style: italic;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+.author {
+  color: #666;
+  font-weight: 600;
+}
+.accordion {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: left;
+}
+.accordion-item {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+.accordion-toggle {
+  width: 100%;
+  padding: 18px 0;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.arrow {
+  transition: transform 0.3s;
+}
+.accordion-toggle.active .arrow {
+  transform: rotate(180deg);
+}
+.accordion-content {
+  display: none;
+  padding: 0 0 20px;
+  color: #444;
+}
+.newsletter {
+  background: #111827;
+  color: white;
+}
+.newsletter form {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.newsletter input {
+  padding: 14px;
+  width: 300px;
+  max-width: 100%;
+  border-radius: 8px;
+  border: none;
+}
+.contact-form {
+  max-width: 600px;
+  margin: 40px auto 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.contact-form input,
+.contact-form textarea {
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  width: 100%;
+  background: white;
+}
+body.dark .contact-form input,
+body.dark .contact-form textarea {
+  background: #1e293b;
+  border-color: #334155;
+  color: white;
+}
+.contact-form textarea {
+  resize: vertical;
+}
+.contact-form button {
+  align-self: center;
+  width: 200px;
+}
+.contact-info p {
+  font-size: 1.2rem;
+  margin: 20px 0;
+}
+.icon-contact {
+  color: #2563eb;
+  margin-right: 10px;
+}
+.icon-contact::before {
+  content: "●";
+  display: inline-block;
+  font-size: 0.9rem;
+}
+.contact a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+.contact a:hover {
+  text-decoration: underline;
+}
+.footer {
+  background: #111;
+  color: white;
+  padding: 30px;
+  text-align: center;
+}
+
+/* DARK MODE */
+body.dark {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+body.dark .navbar {
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+body.dark .card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+body.dark .accordion-item {
+  border-color: #334155;
+}
+body.dark nav a {
+  color: #e2e8f0;
+}
+
+/* Стили для статей (фикс цветов, подчёркиваний, изображений) */
+.article-hero {
+  height: 60vh;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 20px;
+}
+.article-hero h1, .article-hero p {
+  text-decoration: none !important;
+  color: white !important;
+}
+.article-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+.article-content h2 {
+  color: #111 !important;
+  text-decoration: none !important;
+  font-size: 32px;
+  margin: 50px 0 20px;
+  text-align: left;
+}
+body.dark .article-content h2 {
+  color: #e2e8f0 !important;
+}
+.article-content p, .article-content li {
+  color: #333;
+  text-align: left;
+  margin-bottom: 25px;
+}
+body.dark .article-content p, body.dark .article-content li {
+  color: #e2e8f0;
+}
+.article-content img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 40px 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .navbar nav {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: inherit;
+    padding: 20px;
+  }
+  .navbar nav.show {
+    display: flex;
+  }
+  nav a {
+    margin: 15px 0;
+    font-size: 1.2rem;
+  }
+  .mobile-menu {
+    display: block;
+  }
+  .hero h1 {
+    font-size: 40px;
+  }
+  .newsletter form {
+    flex-direction: column;
+    align-items: center;
+  }
+  .auth-modal {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.8);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 2000;
+}
+
+.auth-box {
+background: white;
+padding: 40px;
+border-radius: 12px;
+width: 300px;
+text-align: center;
+}
+
+.auth-box input {
+width: 100%;
+margin: 10px 0;
+padding: 10px;
+}
+
